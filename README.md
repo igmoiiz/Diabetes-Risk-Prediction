@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/License-Restricted-red.svg)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 
-A comprehensive Machine Learning pipeline to predict diabetes risk, complete with Exploratory Data Analysis (EDA), intensive model training, hyperparameter tuning, and advanced model explainability using SHAP.
+A comprehensive Machine Learning pipeline to predict diabetes risk, complete with Exploratory Data Analysis (EDA), intensive model training, hyperparameter tuning, advanced model explainability using SHAP, and a fully interactive **Streamlit Web UI**.
 
 This project is authored by **Moiz Baloch**.
 
@@ -26,6 +26,7 @@ graph TD
     A[(dataset/diabetes_risk_dataset.csv)] --> B(main.py)
     B --> C(tune.py)
     C --> D(explain.py)
+    D --> E(app.py)
     
     B -- Creates --> P1((plots/01 to 06\nEDA & Baselines))
     B -- Saves --> M1[models/best_model.pkl]
@@ -35,12 +36,16 @@ graph TD
     
     D -- Creates --> P3((plots/08\nSHAP Explanations))
     D -- Saves --> M3[models/best_model_final.pkl\nProduction Model]
+    
+    M3 -. Loads Extracted Model .-> E
+    E -- Provides --> UI[/Interactive Web UI/]
 ```
 
 ### High-Level Summary
 1.  `main.py` -> Cleans data, performs EDA, trains 10 baseline models, and saves the best basic model.
 2.  `tune.py` -> Runs Grid and Randomized Search Cross-Validation to optimize the baseline models and saves the best-tuned model.
 3.  `explain.py` -> Finalizes a strongly-calibrated model (Logistic Regression), evaluates confidence distributions, and exports SHAP plots to explain *why* the model makes its decisions.
+4.  `app.py` -> Launches a dynamic, user-friendly **Streamlit** Web UI that allows anyone to input patient data and instantly view the predicted risk, confidence, and exactly which factors drove that prediction via generated SHAP waterfall plots.
 
 ---
 
@@ -99,6 +104,22 @@ python explain.py
 
 ---
 
+### 4. `app.py` - Web Interface / Interactive Web UI
+The final piece of the pipeline. It brings your model into the real world with a graphical web application.
+
+**Key Actions:**
+*   **Predictive Dashboard:** Takes manual user input from the sidebar (patient demographics, lifestyle, and lab results).
+*   **Live Predictions:** Loads the `best_model_final.pkl` and corresponding scaler/encoders to predict risk dynamically on the fly.
+*   **Visual Interpretability:** Immediately generates probability breakdown bars and localized SHAP Waterfall charts within the browser to visually explain exactly why a specific risk was assigned.
+*   **Alerts & Triage:** Highlights high vs. borderline vs. low risk predictions cleanly and beautifully to replicate a production software feel.
+
+**Run Command:**
+```bash
+streamlit run app.py
+```
+
+---
+
 ## 📂 Directory Structure
 
 ```text
@@ -128,6 +149,7 @@ Diabetes Prediction/
 ├── main.py                             # 1st executable
 ├── tune.py                             # 2nd executable
 ├── explain.py                          # 3rd executable
+├── app.py                              # 4th executable (Streamlit UI)
 │
 ├── README.md                           # Project Documentation
 └── LICENSE                             # Restricted License
@@ -140,7 +162,7 @@ Diabetes Prediction/
 Make sure you have a Python 3.8+ environment. Install the necessary packages before running:
 
 ```bash
-pip install pandas numpy matplotlib seaborn scipy scikit-learn xgboost lightgbm catboost shap joblib
+pip install pandas numpy matplotlib seaborn scipy scikit-learn xgboost lightgbm catboost shap joblib streamlit
 ```
 
 To fully execute the pipeline, simply navigate to the workspace directory and execute the primary python files synchronously as strictly ordered.
@@ -149,4 +171,5 @@ To fully execute the pipeline, simply navigate to the workspace directory and ex
 python main.py
 python tune.py
 python explain.py
+streamlit run app.py
 ```
